@@ -1,0 +1,25 @@
+<!-- Шаблон вывода главной страницы -->
+{% extends 'base.html' %}
+{% load cache %}
+
+{% block title %}
+  {{'Социальная сеть Yatube'}}
+{% endblock %}
+
+{% block content %}
+  <h1>Последние обновления на сайте</h1>
+  {% include 'posts/includes/switcher.html' %}
+  {% cache 20 index_page with page_obj %}
+    {% for post in page_obj %}
+      {% include 'posts/includes/post.html' %}
+      <p>
+        {% if post.group %}  
+          <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы 
+        {% endif %}
+      </p>
+      <p><a href="{% url 'posts:profile' post.author.username %}">все посты пользователя</a></p>
+      {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+  {% endcache %} 
+  {% include 'posts/includes/paginator.html' %}
+{% endblock %}
