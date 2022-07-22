@@ -16,7 +16,7 @@ class Group(models.Model):
     description = models.TextField(
         verbose_name="Описание",
         help_text="Введите описание группы")
-    
+
     class Meta:
         verbose_name = 'Группа'
         verbose_name_plural = 'Группы'
@@ -82,7 +82,7 @@ class Comment(models.Model):
         auto_now_add=True,
         verbose_name="Дата публикации",
         help_text="Дата публикации")
-    
+
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
@@ -96,7 +96,7 @@ class Follow(models.Model):
                              related_name="follower")
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name="following")
-    
+
     class Meta:
         verbose_name = 'Подписки'
         verbose_name_plural = 'Подписки'

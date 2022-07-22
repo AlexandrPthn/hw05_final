@@ -36,7 +36,8 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
     post_list = author.posts.select_related('author', 'group')
     page = get_paginator(post_list, request)
-    following = request.user.is_authenticated and author.following.filter(user=request.user).exists()
+    following = request.user.is_authenticated and author.following.filter(
+        user=request.user).exists()
     context = {
         'author': author,
         'post_count': page.paginator.count,
@@ -134,7 +135,7 @@ def profile_follow(request, username):
 @login_required
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
-    profile_follow = get_object_or_404(Follow, 
+    profile_follow = get_object_or_404(Follow,
                                        author=author,
                                        user=request.user)
     profile_follow.delete()
