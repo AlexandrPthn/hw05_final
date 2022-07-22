@@ -4,7 +4,6 @@ from django.db import models
 User = get_user_model()
 
 
-# Модель групп пользователей
 class Group(models.Model):
     title = models.CharField(
         max_length=200,
@@ -17,12 +16,15 @@ class Group(models.Model):
     description = models.TextField(
         verbose_name="Описание",
         help_text="Введите описание группы")
+    
+    class Meta:
+        verbose_name = 'Группа'
+        verbose_name_plural = 'Группы'
 
     def __str__(self):
         return self.title
 
 
-# Модель постов пользователей
 class Post(models.Model):
     text = models.TextField(
         verbose_name="Текст поста",
@@ -57,11 +59,9 @@ class Post(models.Model):
         verbose_name_plural = 'Посты'
 
     def __str__(self):
-        # выводим текст поста
         return self.text
 
 
-# Модель комментариев пользователей
 class Comment(models.Model):
     post = models.ForeignKey(
         Post,
@@ -82,11 +82,13 @@ class Comment(models.Model):
         auto_now_add=True,
         verbose_name="Дата публикации",
         help_text="Дата публикации")
+    
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
 
     def __str__(self):
         return self.text
-
-# Модель подписок пользователей
 
 
 class Follow(models.Model):
@@ -94,3 +96,7 @@ class Follow(models.Model):
                              related_name="follower")
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name="following")
+    
+    class Meta:
+        verbose_name = 'Подписки'
+        verbose_name_plural = 'Подписки'

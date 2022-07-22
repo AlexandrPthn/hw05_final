@@ -8,23 +8,19 @@ from .models import Follow, Group, Post, User
 
 
 def get_paginator(queryset, request):
-    # Пагинация страниц
     paginator = Paginator(queryset, settings.PER_PAGE)
     page_number = request.GET.get('page')
     return paginator.get_page(page_number)
 
 
 def index(request):
-    # Вывод главной страницы
     page = get_paginator(
         Post.objects.select_related(
             'author', 'group'), request)
-    context = {'page_obj': page}
-    return render(request, 'posts/index.html', context)
+    return render(request, 'posts/index.html', {'page_obj': page})
 
 
 def group_posts(request, slug):
-    # Вывод записей группы slug
     group = get_object_or_404(Group, slug=slug)
     page = get_paginator(
         group.posts.select_related('author', 'group'),
@@ -37,11 +33,10 @@ def group_posts(request, slug):
 
 
 def profile(request, username):
-    # Профиль пользователя
     author = get_object_or_404(User, username=username)
     post_list = author.posts.select_related('author', 'group')
     page = get_paginator(post_list, request)
-    following = request.user.is_authenticated and author.following.exists()
+    following = request.user.is_authenticated and author.following.filter(user=request.user).exists()
     context = {
         'author': author,
         'post_count': page.paginator.count,
@@ -52,7 +47,6 @@ def profile(request, username):
 
 
 def post_detail(request, post_id):
-    # Страница поста
     post = get_object_or_404(
         Post.objects.select_related(
             'author', 'group'), pk=post_id)
@@ -74,7 +68,6 @@ def post_detail(request, post_id):
 
 @login_required
 def post_create(request):
-    # Страница создания поста
     template = 'posts/create_post.html'
     if request.method == 'POST':
         form = PostForm(request.POST or None, files=request.FILES or None)
@@ -90,7 +83,6 @@ def post_create(request):
 
 @login_required
 def post_edit(request, post_id):
-    # Страница редактирования поста
     post = get_object_or_404(Post, pk=post_id)
     if post.author != request.user:
         return redirect('posts:post_detail', post_id=post_id)
@@ -112,7 +104,6 @@ def post_edit(request, post_id):
 
 @login_required
 def add_comment(request, post_id):
-    # Добавление комментария
     post = get_object_or_404(Post, pk=post_id)
     form = CommentForm(request.POST or None)
     if form.is_valid():
@@ -125,7 +116,6 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    # Подписки
     page = get_paginator(
         Post.objects.filter(
             author__following__user=request.user),
@@ -135,7 +125,6 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
-    # Подписка
     author = get_object_or_404(User, username=username)
     if author != request.user:
         Follow.objects.get_or_create(user=request.user, author=author)
@@ -144,10 +133,9 @@ def profile_follow(request, username):
 
 @login_required
 def profile_unfollow(request, username):
-    # Отписка
     author = get_object_or_404(User, username=username)
-    profile_follow = Follow.objects.get(author=author,
-                                        user=request.user)
-    if Follow.objects.filter(id=profile_follow.id).exists():
-        profile_follow.delete()
+    profile_follow = get_object_or_404(Follow, 
+                                       author=author,
+                                       user=request.user)
+    profile_follow.delete()
     return redirect('posts:profile', username=username)

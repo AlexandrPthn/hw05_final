@@ -8,7 +8,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.paginator import Paginator
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+
 from PIL import Image
+
 from posts.models import Comment, Follow, Group, Post
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
@@ -49,7 +51,6 @@ class ViewPagesTests(TestCase):
         self.authorized_client.force_login(self.user)
 
     def test_pages_correct_template(self):
-        """URL-адрес использует соответствующий шаблон."""
         templates_pages_names = {
             '/': 'posts/index.html',
             (f'/group/{self.group.slug}/'): 'posts/group_list.html',
@@ -64,8 +65,6 @@ class ViewPagesTests(TestCase):
                 self.assertTemplateUsed(response, template)
 
     def test_pages_correct_context(self):
-        """Шаблоны index, group_list, profile"""
-        """сформированs с правильным контекстом."""
         context_pages_names = {
             reverse('posts:index'),
             reverse('posts:group_list', kwargs={'slug': self.group.slug}),
@@ -88,7 +87,6 @@ class ViewPagesTests(TestCase):
             self.assertIn("<img", response.content.decode())
 
     def test_post_create_correct_context(self):
-        """Шаблон post_create сформирован с правильным контекстом."""
         post = Post.objects.create(
             text='Текст поста2',
             author=User.objects.create_user(username='auth2'),
@@ -125,7 +123,6 @@ class ViewPagesTests(TestCase):
         self.assertEqual(comment_obj, 1)
 
     def test_cache(self):
-        """ Проверка работы кэширования главной страницы. """
         post = Post.objects.create(
             text='cache_test',
             author=self.user,
@@ -210,7 +207,8 @@ class FollowTest(TestCase):
         self.assertEqual(follow_obj, 0)
 
     def test_follow_index(self):
-        follow_url = f'/profile/{self.user2.username}/follow/'
-        self.authorized_client.get(follow_url)
+        self.authorized_client.get(reverse('posts:profile_follow',
+                                           args=(self.user2,)),
+                                   follow=True)
         response = self.authorized_client.get(reverse('posts:follow_index'))
         self.assertEqual(response.context.get('page_obj')[0], self.post)

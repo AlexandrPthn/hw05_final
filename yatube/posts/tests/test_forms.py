@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+
 from posts.models import Group, Post
 
 User = get_user_model()
@@ -71,7 +72,7 @@ class PostFormTests(TestCase):
         self.assertEqual(Post.objects.count(), post_count + 1)
         self.assertEqual(post.text, form_data['text'])
         self.assertEqual(post.group.id, form_data['group'])
-        self.assertEqual(post.image.name, 'posts/small.gif')
+        self.assertEqual(post.image.name, f'posts/{uploaded.name}')
 
     def test_check_edit_post(self):
         posts_count = Post.objects.count()
