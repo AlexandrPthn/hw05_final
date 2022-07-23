@@ -7,7 +7,7 @@
 
 {% block content %}
   <h1>Подписки</h1>
-  {% include 'posts/includes/switcher.html' %}
+  {% include 'posts/includes/switcher.html' with follow=True %}
     {% for post in page_obj %}
       {% include 'posts/includes/post.html' %}
       <p>

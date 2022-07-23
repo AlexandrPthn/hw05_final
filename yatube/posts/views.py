@@ -53,15 +53,10 @@ def post_detail(request, post_id):
             'author', 'group'), pk=post_id)
     comments = post.comments.all()
     posts_count = post.author.posts.count()
-    following = (
-        request.user.is_authenticated
-        and post.author.following.filter(user=request.user).exists()
-    )
     context = {
         'comments': comments,
         'post_count': posts_count,
         'post': post,
-        'following': following,
         'form': CommentForm(),
     }
     return render(request, 'posts/post_detail.html', context)

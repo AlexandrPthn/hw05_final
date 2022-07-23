@@ -26,7 +26,7 @@
         </li>
         <li class="list-group-item">
           Всего постов автора:  <span > {{ post_count }} </span>
-          <p><a href="{% url 'posts:profile' post.author.username %}" with following=following>все посты пользователя</a></a></p>
+          <p><a href="{% url 'posts:profile' post.author.username %}">все посты пользователя</a></a></p>
         </li>
         <li class="list-group-item">
           {% if post.author == user %}   

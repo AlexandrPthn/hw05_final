@@ -10,7 +10,6 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from PIL import Image
-
 from posts.models import Comment, Follow, Group, Post
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
