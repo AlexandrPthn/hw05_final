@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+import PIL
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -9,7 +10,6 @@ from django.core.paginator import Paginator
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
-from PIL import Image
 from posts.models import Comment, Follow, Group, Post
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
@@ -22,7 +22,7 @@ class ViewPagesTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        img = Image.new('RGB', (10, 10), color=(10, 10, 10))
+        img = PIL.Image.new('RGB', (10, 10), color=(10, 10, 10))
         img.save('test.png')
         cls.user = User.objects.create_user(username='auth')
         cls.group = Group.objects.create(
